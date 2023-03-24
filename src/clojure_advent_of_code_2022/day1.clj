@@ -6,7 +6,7 @@
   [path]
   (slurp path))
 
-(def file_content (read-file "day1_data.txt"))
+(def file_content (read-file "resources/2022/day1_data.txt"))
 (def group_of_str (str/split file_content #"\n\n"))
 (def group_of_int (into []
                         (map #(str/split  % #"\n")

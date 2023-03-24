@@ -33,7 +33,7 @@
   [path]
   (slurp path))
 
-(def file_content (read-file "day2_data.txt"))
+(def file_content (read-file "resources/2022/day2_data.txt"))
 (def group_of_xyz (str/split file_content #"\n"))
 (def group_of_str (map #(str/split % #" ") group_of_xyz))
 
