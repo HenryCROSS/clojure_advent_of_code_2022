@@ -1,3 +1,5 @@
+(ns clojure-advent-of-code-2022.day1)
+
 (require '[clojure.string :as str])
 
 (defn read-file
@@ -18,11 +20,17 @@
   [src]
   (reduce + 0 src))
 
-(def the_max_value (reduce max
-                           (map vec_int_accum
-                                (map vec_str->vec_int
-                                     group_of_int))))
+(def sum_for_each (map vec_int_accum
+                        (map vec_str->vec_int
+                               group_of_int)))
 
+(def the_max_value (reduce max
+                           sum_for_each))
 (eval the_max_value)
 ;; => 66306
 
+;; part 2: find sum of the top 3
+(def top_3 (take 3 (reverse (sort sum_for_each))))
+(def the_sum_of_top_3 (reduce + top_3))
+(eval the_sum_of_top_3)
+;; => 195292
