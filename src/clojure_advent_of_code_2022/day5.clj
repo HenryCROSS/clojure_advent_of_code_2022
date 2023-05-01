@@ -51,7 +51,7 @@
 
 (defn transfer_idx
   [[x y z]]
-  (list x (Integer/parseInt y) (Integer/parseInt z)))
+  (list (Integer/parseInt x) (- (Integer/parseInt y) 1) (- (Integer/parseInt z) 1)))
 
 (def tokenized_rearrangement (map (comp transfer_idx tokenize) rearrangement))
 
@@ -72,6 +72,63 @@
   ([xss]
    (form_stack (reduce (fn [xs _] (conj xs [])) [] (first xss)) xss)))
 
-(def organized_stack (form_stack transfered_crates))
+(defn reduce_empty_slot
+  [xs]
+  (filter (comp #(> 0 %1) #(compare " " %1)) xs))
 
+(def organized_stack (map reduce_empty_slot (form_stack transfered_crates)))
 
+(defn take-crates
+  [num xs]
+  (list (drop num xs) (reverse (take num xs))))
+
+(defn mv_crates
+  [num stack1 stack2]
+  (let [[stack1 tmp_stack] (take-crates num stack1)]
+    (list stack1 (flatten (list tmp_stack stack2)))))
+
+(def after_rearrangement_stacks
+  (loop [stacks (into [] organized_stack)
+         [xs & xss] tokenized_rearrangement]
+    (if (empty? xs)
+      stacks
+      (let [[num pos1 pos2] xs
+            [stack1 stack2] (mv_crates num (get stacks pos1) (get stacks pos2))
+            stack (map-indexed (fn [idx xs]
+                                 (cond
+                                   (= idx pos1) stack1
+                                   (= idx pos2) stack2
+                                   :else xs)) stacks)]
+        (recur (into [] stack) xss)
+        ))))
+
+(map first after_rearrangement_stacks)
+;; QMBMJDFTD
+
+;; Part 2
+(defn take-crates-2
+  [num xs]
+  (list (drop num xs) (take num xs)))
+
+(defn mv_crates-2
+  [num stack1 stack2]
+  (let [[stack1 tmp_stack] (take-crates-2 num stack1)]
+    (list stack1 (flatten (list tmp_stack stack2)))))
+
+(def after_rearrangement_stacks-2
+  (loop [stacks (into [] organized_stack)
+         [xs & xss] tokenized_rearrangement]
+    (if (empty? xs)
+      stacks
+      (let [[num pos1 pos2] xs
+            [stack1 stack2] (mv_crates-2 num (get stacks pos1) (get stacks pos2))
+            stack (map-indexed (fn [idx xs]
+                                 (cond
+                                   (= idx pos1) stack1
+                                   (= idx pos2) stack2
+                                   :else xs)) stacks)]
+        (recur (into [] stack) xss)
+        ))))
+
+(map first after_rearrangement_stacks-2)
+;; NBTVTJNFJ
